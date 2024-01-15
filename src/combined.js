@@ -4912,8 +4912,51 @@ function giveWorkerWork (workerCode){
     })
 }
 
+let workerPresetCode = `
+// --------------------------------------------------------------------------
+// -- worker-with-arguments.js
+// --------------------------------------------------------------------------
+
+const {
+  Worker, isMainThread, parentPort, workerData,
+} = require('node:worker_threads');
+
+const {QuantizedMap} = require('konduktiva')
+
+function returnToParent (info){
+    parentPort.postMessage(info)
+}
+
+if (workerData === 0){
+    returnToParent(new QuantizedMap(4, [0, 1, 2, 3], [1, 1, 1, 1]))
+}
+else if (workerData === 1){
+    returnToParent(new QuantizedMap(4, [0], [false]))
+}
+
+process.exit()
+// eval(process.argv[2])
+`
+
+function giveWorkerPresetWork (option = 0){
+    return new Promise((resolve, reject) => {
+        worker = new Worker(workerPresetCode, {eval: true, workerData: option})
+        worker.on('message', result => {
+              console.log('worker done', result)
+              resolve(result)
+              worker.terminate()
+        })
+        worker.on('error', err => {
+            console.log('worker crashed', err)
+            // Reject the Promise with the error if something goes wrong
+            reject(err);
+            worker.terminate()
+        });
+    })
+}
+
 addToModuleExports({
-    workerCodeForArguments, giveWorkerWork
+    workerCodeForArguments, giveWorkerWork, giveWorkerPresetWork
 })
 // --------------------------------------------------------------------------
 //Other setup functions:
