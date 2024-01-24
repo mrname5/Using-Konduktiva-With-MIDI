@@ -1990,6 +1990,33 @@ function generativeParseString (inputString,rules,generations) {
 }
 //Chatgpt helped with removing for loop
 
+function generativeParseString(inputString, rules, generations) {
+    let currentGeneration = inputString;
+    Array.from({ length: generations }, () => {
+        currentGeneration = parseString(currentGeneration, rules);
+    })
+    return currentGeneration;
+}
+
+function generativeParseString(inputString, rules, generations) {
+    let currentGeneration = inputString;
+    Array.from({ length: generations }, () => {
+        let tempGeneration = parseString(currentGeneration, rules);
+        currentGeneration = null
+        currentGeneration = tempGeneration
+        tempGeneration = null
+    })
+    return currentGeneration;
+}
+
+async function waitFor (time){
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve()
+        }, time)
+    })
+}
+
 //Gnerated the QuantizedMap for the lsystem chord progression:
 /**
   * Generates a random L-system in form of a QuantizedMap.
@@ -2019,6 +2046,7 @@ async function generateRandomLsystemChordProgression (){
     noteDurationData = A.resizeArray(notesData.length, noteDurationData)
     octaveData = A.resizeArray(notesData.length, octaveData).map(x => {return x * 2})
     velocityData = A.resizeArray(notesData.length, velocityData).map(x => {return x * (x * 10)})
+    await waitFor(5)
     return new QuantizedMap(notesData.length, noteDurationData, notesData.map((x, i) => {return {data: [{note: x, octave: octaveData[i], velocity: velocityData[i]}], bool: boolsData[i]}}))
 }
 
@@ -2099,7 +2127,16 @@ function generativeParseString (inputString,rules,generations) {
         return inputString
    })[generations - 1]
 }
-//Chatgpt helped with removing for loop
+
+function generativeParseString(inputString, rules, generations) {
+    let currentGeneration = inputString;
+    while (generations > 0) {
+        let tempGeneration = parseString(currentGeneration, rules);
+        currentGeneration = tempGeneration;
+        generations -= 1;
+    }
+    return currentGeneration;
+}
 
 function generateRandomLsystemString (length = 30, pickedAlphabets){
     let configuration = generateRandomLSystemConfiguration(pickedAlphabets)
@@ -2119,18 +2156,6 @@ function generateLsystemAlphabets (){
     return Array.from({length: randomRange(2, 10)}, () => {
         return A.pick(alphabets)
     })
-}
-
-/**
-  * Loops a string by a certain amount of times:
-  * @param {number} times - Number of times the string should be repeated.
-  * @param {string} string - The string that should be repeated.
-  * @example
-  * console.log(repeatString(2, 'Hi how are you')) //'Hi how are youHi how are you'
-  * console.log(repeatString(3, 'Ha ')) //'Ha Ha Ha '
-*/
-function repeatString (times, string){
-    return A.buildArray(times, x => {return string}).join('')
 }
 
 /**
@@ -2225,6 +2250,9 @@ function generateRandomLsystemString(length = 30, pickedAlphabets){
     })
 }
 //helped by chatgpt
+
+//HERE akdjbcksdjvbisjdv
+//remove Event Listeners and Event Emitters:
 
 //Generates bools data for the lsystem chord progression:
 /**
@@ -2327,6 +2355,7 @@ async function generateLsystemByAssigningNumberToLetter (mode, octaves,length) {
 // hi = generateLsystemByAssigningNumberToLetter([0,2,4,7,9,11], [4 ,5, 6], 10)
 
 addToModuleExports({
+  workerScript,
   convertLsystemStringToNumbersViaAssignedLetters,
   generateCondition,
   generateLsystemAlphabets,
