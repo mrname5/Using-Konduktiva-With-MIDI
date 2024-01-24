@@ -2150,6 +2150,33 @@ function generateRandomLsystemString (length = 30, pickedAlphabets){
     return finalLsystem
 }
 
+//lsystem function with stale lsystem checks:
+function generateRandomLsystemString (length = 30, pickedAlphabets){
+    let configuration = generateRandomLSystemConfiguration(pickedAlphabets)
+    if (configuration.startingLetters === generativeParseString(configuration.startingLetters, configuration.conditions, 1)){
+        return configuration.startingLetters
+    }
+    let staleCounter = 0
+//     console.log('configuration', configuration)
+    let finalLsystem = ''
+    let failedAttemps = 0
+    while (finalLsystem.length < length && failedAttemps < 1000){
+        failedAttemps += 1
+        let newSystem = generativeParseString(configuration.startingLetters, configuration.conditions, 3 ** failedAttemps)
+        if (staleCounter >= 5){
+            return finalLsystem
+        }
+        else if (newSystem === finalLsystem){
+            staleCounter += 1
+        }
+        else {
+            staleCounter = 0
+        }
+        finalLsystem = newSystem
+    }
+    return finalLsystem
+}
+
 //generates alphabets for the lsystem chord progression:
 function generateLsystemAlphabets (){
     let alphabets = Array.from({ length: 26 }, (_, i) => String.fromCharCode(97 + i));
